@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 SCENARIOS: dict[str, dict[str, Any]] = {
-    "INC-001": {"name": "Nginx 502", "service": "api", "root_cause": "API container stopped", "tools": ["http_health_check", "docker_list_containers", "docker_read_logs", "docker_inspect_container"], "action": ("docker_restart_container", {"container_id": "demo-api"}), "verify": "HTTP status becomes 200"},
+    "INC-001": {"name": "Nginx 502", "service": "api", "root_cause": "API container stopped", "alternatives": ["Nginx upstream misconfiguration", "Network path failure"], "tools": ["http_health_check", "docker_list_containers", "docker_read_logs", "docker_inspect_container"], "action": ("docker_restart_container", {"container_id": "demo-api"}), "verify": "HTTP status becomes 200"},
     "INC-002": {"name": "API timeout", "service": "api", "root_cause": "PostgreSQL connection pool exhausted", "tools": ["http_health_check", "prometheus_query", "docker_read_logs", "postgres_activity_summary"], "action": ("docker_restart_container", {"container_id": "demo-api"}), "verify": "Latency returns below 500 ms"},
     "INC-003": {"name": "Worker backlog", "service": "worker", "root_cause": "Worker stopped", "tools": ["redis_queue_length", "docker_list_containers", "docker_read_logs"], "action": ("restart_worker", {"service": "worker"}), "verify": "Queue depth decreases"},
     "INC-004": {"name": "Disk full", "service": "api", "root_cause": "Unbounded application log growth", "tools": ["disk_usage", "docker_read_logs", "system_resource_usage"], "action": ("rotate_demo_logs", {"service": "api"}), "verify": "Disk usage falls below 80%"},

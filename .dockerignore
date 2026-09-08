@@ -7,5 +7,7 @@ __pycache__
 *.db
 *.egg-info
 tests
-docs
+docs/*
+!docs/runbooks
+!docs/runbooks/*.md
 .DS_Store

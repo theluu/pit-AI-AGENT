@@ -25,6 +25,12 @@ class Status(StrEnum):
     CANCELLED = "cancelled"
 
 
+class RuntimeMode(StrEnum):
+    AUTO = "auto"
+    LLM = "llm"
+    DETERMINISTIC = "deterministic"
+
+
 class IncidentCreate(BaseModel):
     title: str = Field(min_length=3, max_length=160)
     description: str = Field(min_length=3, max_length=4000)
@@ -32,12 +38,24 @@ class IncidentCreate(BaseModel):
     service: str = "api"
     severity: str = "SEV-2"
     scenario_id: str = "INC-001"
+    runtime_mode: RuntimeMode = RuntimeMode.AUTO
+
+
+class RunCreate(BaseModel):
+    runtime_mode: RuntimeMode | None = None
 
 
 class ApprovalDecision(BaseModel):
     decided_by: str = Field(default="demo-operator", min_length=2, max_length=80)
     arguments: dict[str, Any] | None = None
     confirmation: str | None = None
+    expected_version: int | None = Field(default=None, ge=1)
+    action_hash: str | None = Field(default=None, min_length=16, max_length=128)
+
+
+class EvaluationCreate(BaseModel):
+    mode: RuntimeMode = RuntimeMode.DETERMINISTIC
+    repetitions: int = Field(default=1, ge=1, le=10)
 
 
 class Event(BaseModel):
@@ -47,4 +65,3 @@ class Event(BaseModel):
     message: str
     data: dict[str, Any] = Field(default_factory=dict)
     created_at: str = Field(default_factory=now_iso)
-
