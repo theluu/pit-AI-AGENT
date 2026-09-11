@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import settings
 from .engine import AgentEngine
+from .live_monitor import snapshot as live_snapshot
 from .models import (
     ApprovalDecision,
     EvaluationCreate,
@@ -29,7 +30,9 @@ app = FastAPI(title="AgentOps Commander", version="0.1.0")
 
 
 @app.get("/healthz")
-def health(): return {"status": "ok", "mode": "safe-demo", "store": store.backend}
+def health():
+    mode = "live-read-only" if settings.live_monitoring else "safe-demo"
+    return {"status": "ok", "mode": mode, "store": store.backend}
 
 
 @app.get("/readyz")
@@ -47,6 +50,20 @@ def scenarios(): return [{"id": key, **{k: v for k, v in value.items() if k not 
 
 @app.get("/api/v1/tools")
 def tools(): return public_registry()
+
+
+@app.get("/api/v1/environments")
+def environments():
+    return [{
+        "id": settings.environment_id,
+        "name": settings.environment_name,
+        "host": settings.environment_host,
+        "mode": "live-read-only" if settings.live_monitoring else "demo",
+    }]
+
+
+@app.get("/api/v1/environments/current/status")
+def environment_status(): return live_snapshot()
 
 
 @app.post("/api/v1/incidents", status_code=201)

@@ -13,6 +13,10 @@ class Settings:
     reporter_model: str = os.getenv("AGENTOPS_REPORTER_MODEL", "gpt-5.6-luna")
     max_tool_calls: int = int(os.getenv("AGENTOPS_MAX_TOOL_CALLS", "12"))
     max_replans: int = int(os.getenv("AGENTOPS_MAX_REPLANS", "3"))
+    live_monitoring: bool = os.getenv("AGENTOPS_LIVE_MONITORING", "false").lower() == "true"
+    environment_id: str = os.getenv("AGENTOPS_ENVIRONMENT_ID", "demo-sandbox")
+    environment_name: str = os.getenv("AGENTOPS_ENVIRONMENT_NAME", "Demo Sandbox")
+    environment_host: str = os.getenv("AGENTOPS_ENVIRONMENT_HOST", "local")
 
 
 settings = Settings()

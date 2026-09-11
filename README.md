@@ -45,6 +45,23 @@ curl -s -X POST http://localhost:8000/api/v1/evaluation-runs
 
 Interactive OpenAPI docs are at <http://localhost:8000/docs>.
 
+## Live VPS monitoring
+
+The deployed control plane can expose a read-only health snapshot for one explicitly registered
+environment. It reports load average, memory, disk, uptime, fixed systemd units, and fixed local
+ports. Callers cannot provide a host, command, service, path, or port.
+
+```bash
+AGENTOPS_LIVE_MONITORING=true
+AGENTOPS_ENVIRONMENT_ID=production-vps-01
+AGENTOPS_ENVIRONMENT_NAME="Agent ThemesHub VPS"
+AGENTOPS_ENVIRONMENT_HOST=45.118.145.203
+```
+
+Live monitoring does not enable arbitrary shell execution or mutating operations. Keep incident
+actions in approval-gated demo mode until a separately isolated and authenticated tool gateway is
+available.
+
 ## Security properties
 
 - No arbitrary shell, SQL, PromQL, raw-secret, filesystem deletion, firewall, or external-host tool exists.
